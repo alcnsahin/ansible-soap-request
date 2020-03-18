@@ -85,7 +85,7 @@ def get(url):
 
 def post(url, data):
     req = urllib2.Request(url)
-    req.add_header("Content-Type", "text/xml; charset:utf-8")
+    req.add_header("Content-Type", "text/xml; charset=utf-8")
     response = urllib2.urlopen(req, data, context=ctx)
     return response.read()
 
