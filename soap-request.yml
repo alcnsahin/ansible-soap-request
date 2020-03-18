@@ -1,0 +1,12 @@
+- name: Soap Request
+  hosts: localhost
+  tasks:
+  - name: call soap service
+    soap_request:
+      url: {{ url }}
+      method: 'POST'
+      data: ''
+    register: result
+  - name: dump result
+    debug:
+      msg: '{{ result }}'
