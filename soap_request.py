@@ -49,19 +49,15 @@ author:
 EXAMPLES = '''
 # Pass in a message
 - name: Test with a message
-  my_new_test_module:
-    name: hello world
+  soap_request:
+    url: https://host:port/endpoint
 
 # pass in a message and have changed true
 - name: Test with a message and changed output
-  my_new_test_module:
-    name: hello world
-    new: true
-
-# fail the module
-- name: Test failure of the module
-  my_new_test_module:
-    name: fail me
+  soap_request:
+    url: https://host:port/endpoint
+    method: 'POST'
+    body: '...'
 '''
 
 RETURN = '''
@@ -122,6 +118,8 @@ def run_module():
         result['message'] = post(module.params['url'], module.params['body']),
     else:
         module.fail_json(msg='pls specify a method GET|POST', **result)
+
+    module.exit_json(**result)
 
 
 def main():
