@@ -34,30 +34,28 @@ options:
         description:
             - ...
     method:
-        required: true
+        required: false
         description:
             - GET|POST
     body:
         required: true
         description:
             - ...
-
+    headers:
+        required: false
+        description:
+            - ...
 author:
     - Alican Sahin (@alcnsahin)
 '''
 
 EXAMPLES = '''
-# Pass in a message
-- name: Test with a message
-  soap_request:
-    url: https://host:port/endpoint
-
-# pass in a message and have changed true
+# Simple example
 - name: Test with a message and changed output
   soap_request:
     url: https://host:port/endpoint
     method: 'POST'
-    body: '...'
+    body: '<xmlString></xmlString>'
 '''
 
 RETURN = '''
@@ -68,7 +66,7 @@ message:
     description: The output message that the sample module generates
 '''
 
-from module_utils.basic import AnsibleModule
+from ansible.module_utils.basic import AnsibleModule
 import urllib2
 import ssl
 
@@ -83,10 +81,11 @@ def get(url):
     return response.read()
 
 
-def post(url, data):
+def post(url, headers, body):
     req = urllib2.Request(url)
-    req.add_header("Content-Type", "text/xml; charset=utf-8")
-    response = urllib2.urlopen(req, data, context=ctx)
+    for header_key, header_value in headers.iteritems():
+        req.add_header(header_key, header_value)
+    response = urllib2.urlopen(req, data=body, context=ctx)
     return response.read()
 
 
@@ -96,8 +95,11 @@ def run_module():
         force_basic_auth=dict(type='bool', required=False, default=False),
         user=dict(type='str', required=False),
         password=dict(type='str', required=False),
-        method=dict(type='str', required=True, default='GET'),
-        body=dict(type='str', required=True)
+        method=dict(required=False, default='GET',
+                    choices=['GET', 'POST', 'PUT', 'HEAD', 'DELETE', 'OPTIONS', 'PATCH', 'TRACE', 'CONNECT',
+                             'REFRESH']),
+        body=dict(type='str', required=True),
+        headers=dict(required=False, type='dict', default={})
     )
     result = dict(
         changed=False,
@@ -115,7 +117,8 @@ def run_module():
     if module.params['method'] == 'GET':
         result['message'] = get(module.params['url'])
     elif module.params['method'] == 'POST':
-        result['message'] = post(module.params['url'], module.params['body']),
+        result['message'] = post(module.params['url'], module.params['headers'], module.params['body'])
+        result['changed'] = True
     else:
         module.fail_json(msg='pls specify a method GET|POST', **result)
 
