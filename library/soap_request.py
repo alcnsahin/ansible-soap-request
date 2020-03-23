@@ -69,20 +69,32 @@ message:
 from ansible.module_utils.basic import AnsibleModule
 import urllib2
 import ssl
+import base64
 
 ctx = ssl.create_default_context()
 ctx.check_hostname = False
 ctx.verify_mode = ssl.CERT_NONE
 
 
-def get(url):
+def get_auth_token(user, password):
+    token = 'Basic '
+    if all(v is not None for v in [user, password]):
+        token += base64.b64encode(user + ":" + password)
+    return token
+
+
+def get(url, headers, force_basic_auth, user, password):
     req = urllib2.urlopen(url)
+    if force_basic_auth:
+        req.add_header('Authorization', get_auth_token(user, password))
     response = urllib2.Request(req)
     return response.read()
 
 
-def post(url, headers, body):
+def post(url, headers, body, force_basic_auth, user, password):
     req = urllib2.Request(url)
+    if force_basic_auth:
+        req.add_header('Authorization', get_auth_token(user, password))
     for header_key, header_value in headers.iteritems():
         req.add_header(header_key, header_value)
     response = urllib2.urlopen(req, data=body, context=ctx)
@@ -93,8 +105,8 @@ def run_module():
     module_args = dict(
         url=dict(type='str', required=True),
         force_basic_auth=dict(type='bool', required=False, default=False),
-        user=dict(type='str', required=False),
-        password=dict(type='str', required=False),
+        user=dict(type='str', required=False, default=None),
+        password=dict(type='str', required=False, default=None),
         method=dict(required=False, default='GET',
                     choices=['GET', 'POST', 'PUT', 'HEAD', 'DELETE', 'OPTIONS', 'PATCH', 'TRACE', 'CONNECT',
                              'REFRESH']),
@@ -111,13 +123,20 @@ def run_module():
         supports_check_mode=True
     )
 
+    url = module.params['url']
+    headers = module.params['headers']
+    body = module.params['body']
+    user = module.params['user']
+    password = module.params['password']
+    force_basic_auth = module.params['force_basic_auth']
+
     if module.check_mode:
         return result
 
     if module.params['method'] == 'GET':
-        result['message'] = get(module.params['url'])
+        result['message'] = get(url, headers, force_basic_auth, user, password)
     elif module.params['method'] == 'POST':
-        result['message'] = post(module.params['url'], module.params['headers'], module.params['body'])
+        result['message'] = post(url, headers, body, force_basic_auth, user, password)
         result['changed'] = True
     else:
         module.fail_json(msg='pls specify a method GET|POST', **result)
