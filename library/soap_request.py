@@ -107,9 +107,7 @@ def run_module():
         force_basic_auth=dict(type='bool', required=False, default=False),
         user=dict(type='str', required=False, default=None),
         password=dict(type='str', required=False, default=None),
-        method=dict(required=False, default='GET',
-                    choices=['GET', 'POST', 'PUT', 'HEAD', 'DELETE', 'OPTIONS', 'PATCH', 'TRACE', 'CONNECT',
-                             'REFRESH']),
+        method=dict(required=False, default='GET', choices=['GET', 'POST', 'PUT']),
         body=dict(type='str', required=True),
         headers=dict(required=False, type='dict', default={})
     )
