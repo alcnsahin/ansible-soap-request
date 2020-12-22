@@ -23,12 +23,6 @@ Example Playbook
         debug:
           msg: '{{ result }}'
 
-
-License
--------
-
-BSD
-
 Author Information
 ------------------
 
