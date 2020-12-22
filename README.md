@@ -1,6 +1,35 @@
-# ansible simple soap request example
+SOAP Request
+=========
 
-**Usage:**
+This plugin calls soap and rest apis by POST and GET methods.
 
-`ansible-playbook ./soap-request.yml -vvv`
- 
+
+Example Playbook
+----------------
+
+    - name: Soap Request
+      hosts: localhost
+      tasks:
+      - name: call soap service
+        soap_request:
+          url: "https://host:port/api/endpoint.svc"
+          method: 'POST'
+          headers:
+            Content-Type: text/xml; charset=utf-8
+            Another-Header: foo
+          body: '<xmlString></xmlString>'
+        register: result
+      - name: dump result
+        debug:
+          msg: '{{ result }}'
+
+
+License
+-------
+
+BSD
+
+Author Information
+------------------
+
+If you have any question please contact me on [Linkedin](https://www.linkedin.com/in/alcnsahin/)
