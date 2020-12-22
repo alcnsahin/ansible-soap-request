@@ -1,7 +1,7 @@
 SOAP Request
 =========
 
-This plugin calls soap and rest apis by POST and GET methods.
+This plugin calls soap and rest APIs by POST and GET methods.
 
 
 Example Playbook
