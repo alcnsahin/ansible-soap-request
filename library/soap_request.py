@@ -88,7 +88,7 @@ def get(url, headers, force_basic_auth, user, password):
     if force_basic_auth:
         req.add_header('Authorization', get_auth_token(user, password))
     response = urllib2.Request(req)
-    return response.read(), response.header_items()
+    return response.read()
 
 
 def post(url, headers, body, force_basic_auth, user, password):
@@ -98,7 +98,7 @@ def post(url, headers, body, force_basic_auth, user, password):
     for header_key, header_value in headers.iteritems():
         req.add_header(header_key, header_value)
     response = urllib2.urlopen(req, data=body, context=ctx)
-    return response
+    return response.read(), response.header_items()
 
 
 def run_module():
