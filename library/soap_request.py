@@ -88,7 +88,7 @@ def get(url, headers, force_basic_auth, user, password):
     if force_basic_auth:
         req.add_header('Authorization', get_auth_token(user, password))
     response = urllib2.Request(req)
-    return response.read()
+    return response.read(), response.info().headers
 
 
 def post(url, headers, body, force_basic_auth, user, password):
@@ -98,7 +98,7 @@ def post(url, headers, body, force_basic_auth, user, password):
     for header_key, header_value in headers.iteritems():
         req.add_header(header_key, header_value)
     response = urllib2.urlopen(req, data=body, context=ctx)
-    return response.read(), response.header_items()
+    return response.read(), response.info().headers
 
 
 def run_module():
@@ -132,7 +132,9 @@ def run_module():
         return result
 
     if module.params['method'] == 'GET':
-        result['message'] = get(url, headers, force_basic_auth, user, password)
+        response_body, response_headers = get(url, headers, force_basic_auth, user, password)
+        result['message'] = response_body
+        result['response_headers'] = response_headers
     elif module.params['method'] == 'POST':
         response_body, response_headers = post(url, headers, body, force_basic_auth, user, password)
         result['message'] = response_body
