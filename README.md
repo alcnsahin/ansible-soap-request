@@ -7,6 +7,9 @@ This plugin calls soap and rest apis by POST and GET methods.
 Example Playbook
 ----------------
 
+`ansible-playbook soap-request.yml`
+
+
     - name: Soap Request
       hosts: localhost
       tasks:
