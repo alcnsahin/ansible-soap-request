@@ -88,7 +88,7 @@ def get(url, headers, force_basic_auth, user, password):
     if force_basic_auth:
         req.add_header('Authorization', get_auth_token(user, password))
     response = urllib2.Request(req)
-    return response.read()
+    return response.read(), response.header_items()
 
 
 def post(url, headers, body, force_basic_auth, user, password):
@@ -134,9 +134,9 @@ def run_module():
     if module.params['method'] == 'GET':
         result['message'] = get(url, headers, force_basic_auth, user, password)
     elif module.params['method'] == 'POST':
-        response = post(url, headers, body, force_basic_auth, user, password)
-        result['message'] = response.read()
-        result['response_headers'] = response.info()
+        response_body, response_headers = post(url, headers, body, force_basic_auth, user, password)
+        result['message'] = response_body
+        result['response_headers'] = response_headers
         result['changed'] = True
     else:
         module.fail_json(msg='pls specify a method GET|POST', **result)
