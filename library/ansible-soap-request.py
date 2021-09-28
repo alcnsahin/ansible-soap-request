@@ -38,7 +38,7 @@ options:
         description:
             - GET|POST
     body:
-        required: true
+        required: false
         description:
             - ...
     headers:
@@ -107,8 +107,8 @@ def run_module():
         force_basic_auth=dict(type='bool', required=False, default=False),
         user=dict(type='str', required=False, default=None),
         password=dict(type='str', required=False, default=None),
-        method=dict(required=False, default='GET', choices=['GET', 'POST', 'PUT']),
-        body=dict(type='str', required=True),
+        method=dict(required=False, default='GET', choices=['GET', 'POST']),
+        body=dict(type='str', required=False),
         headers=dict(required=False, type='dict', default={})
     )
     result = dict(
@@ -141,7 +141,7 @@ def run_module():
         result['response_headers'] = response_headers
         result['changed'] = True
     else:
-        module.fail_json(msg='pls specify a method GET|POST', **result)
+        module.fail_json(msg='specify the http method (get or post available)', **result)
 
     module.exit_json(**result)
 
