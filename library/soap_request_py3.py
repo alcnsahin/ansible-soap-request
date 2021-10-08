@@ -93,7 +93,7 @@ def get_auth_token(user, password):
 def get(url, headers, force_basic_auth, user, password):
     if force_basic_auth:
         headers["Authorization"] = get_auth_token(user, password)
-    r = requests.get(url, headers=headers)
+    r = requests.get(url, headers=headers, verify=False)
     return r.text, r.headers
 
 
@@ -102,7 +102,7 @@ def post(url, headers, body, force_basic_auth, user, password):
         headers["Authorization"] = get_auth_token(user, password)
     for header_key, header_value in headers.items():
         headers[header_key] = header_value
-    r = requests.post(url, data=body, headers=headers)
+    r = requests.post(url, data=body, headers=headers, verify=False)
     return r.text, r.headers
 
 
