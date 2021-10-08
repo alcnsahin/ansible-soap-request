@@ -15,7 +15,7 @@ Simply change the name of the module as soap_request.py that you want to use.
 Example Playbook for soap_request_py2.py
 ----------------
 
-`ansible-playbook -i localhost soap-request.yml`
+`ansible-playbook -i localhost soap-request-py2.yml`
 
 
     - name: Soap Request for Python 2x
@@ -38,7 +38,7 @@ Example Playbook for soap_request_py2.py
 SOAP Example Playbook for Python 3.x
 ----------------
 
-`ansible-playbook -i localhost soap-request.yml`
+`ansible-playbook -i localhost soap-request-py3.yml`
 
 
     - name: Soap Request
@@ -69,7 +69,7 @@ SOAP Example Playbook for Python 3.x
 REST Example Playbook for Python 3.x
 ----------------
 
-`ansible-playbook -i localhost soap-request.yml`
+`ansible-playbook -i localhost soap-request-py3.yml`
 
 
     - name: Rest Request
