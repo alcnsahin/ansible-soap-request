@@ -33,11 +33,19 @@ options:
         required: false
         description:
             - ...
+    api_type:
+        required: true
+        description:
+            - REST|SOAP
     method:
         required: false
         description:
             - GET|POST
-    body:
+    json_body:
+        required: false
+        description:
+            - ...
+    xml_body:
         required: false
         description:
             - ...
@@ -94,7 +102,7 @@ def post(url, headers, body, force_basic_auth, user, password):
         headers["Authorization"] = get_auth_token(user, password)
     for header_key, header_value in headers.items():
         headers[header_key] = header_value
-    r = requests.post(url, headers=headers, data=body)
+    r = requests.post(url, data=body, headers=headers)
     return r.text, r.headers
 
 
@@ -104,8 +112,10 @@ def run_module():
         force_basic_auth=dict(type='bool', required=False, default=False),
         user=dict(type='str', required=False, default=None),
         password=dict(type='str', required=False, default=None),
+        api_type=dict(type='str', required=True, choices=['REST', 'SOAP']),
         method=dict(required=False, default='GET', choices=['GET', 'POST']),
-        body=dict(type='str', required=False),
+        json_body=dict(type='json', required=False),
+        xml_body=dict(type='str', required=False),
         headers=dict(required=False, type='dict', default={})
     )
     result = dict(
@@ -120,7 +130,9 @@ def run_module():
 
     url = module.params['url']
     headers = module.params['headers']
-    body = module.params['body']
+    api_type = module.params['api_type']
+    json_body = module.params['json_body']
+    xml_body = module.params['xml_body']
     user = module.params['user']
     password = module.params['password']
     force_basic_auth = module.params['force_basic_auth']
@@ -131,12 +143,19 @@ def run_module():
     if module.params['method'] == 'GET':
         response_body, response_headers = get(url, headers, force_basic_auth, user, password)
         result['message'] = response_body
-        result['response_headers'] = response_headers
+        result['response_headers'] = dict(response_headers)
+
     elif module.params['method'] == 'POST':
+        if api_type == "REST":
+            body = json.loads(json_body)
+        else:
+            body = xml_body
+
         response_body, response_headers = post(url, headers, body, force_basic_auth, user, password)
         result['message'] = response_body
-        result['response_headers'] = response_headers
+        result['response_headers'] = dict(response_headers)
         result['changed'] = True
+
     else:
         module.fail_json(msg='specify the http method (get or post available)', **result)
 
