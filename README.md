@@ -69,12 +69,12 @@ REST Example Playbook for Python 3.x
       - name: call rest service
         soap_request:
           api_type: REST
-          url: "https://host:port/api/test"
+          url: "https://host:port/api/login"
           method: 'POST'
           headers:
             Content-Type: text/xml; charset=utf-8
             Another-Header: foo
-          json_body: '<xmlString></xmlString>'
+          json_body: {"username": "admin", "password": "pass"}
         register: result
       - name: dump result
         debug:
