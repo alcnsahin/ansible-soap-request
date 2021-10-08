@@ -11,7 +11,7 @@ There are two modules under the ./library folder with different Python versions.
 
 Simply change the name of the module as soap_request.py that you want to use.
 
-Example Playbook
+Example Playbook for soap_request_py2.py
 ----------------
 
 `ansible-playbook -i localhost soap-request.yml`
@@ -28,6 +28,53 @@ Example Playbook
             Content-Type: text/xml; charset=utf-8
             Another-Header: foo
           body: '<xmlString></xmlString>'
+        register: result
+      - name: dump result
+        debug:
+          msg: '{{ result }}'
+          
+          
+SOAP Example Playbook for Python 3.x
+----------------
+
+`ansible-playbook -i localhost soap-request.yml`
+
+
+    - name: Soap Request
+      hosts: localhost
+      tasks:
+      - name: call soap service
+        soap_request:
+          api_type: SOAP
+          url: "https://host:port/api/endpoint.svc"
+          method: 'POST'
+          headers:
+            Content-Type: text/xml; charset=utf-8
+            Another-Header: foo
+          xml_body: '<xmlString></xmlString>'
+        register: result
+      - name: dump result
+        debug:
+          msg: '{{ result }}'
+
+REST Example Playbook for Python 3.x
+----------------
+
+`ansible-playbook -i localhost soap-request.yml`
+
+
+    - name: Soap Request
+      hosts: localhost
+      tasks:
+      - name: call rest service
+        soap_request:
+          api_type: REST
+          url: "https://host:port/api/test"
+          method: 'POST'
+          headers:
+            Content-Type: text/xml; charset=utf-8
+            Another-Header: foo
+          json_body: '<xmlString></xmlString>'
         register: result
       - name: dump result
         debug:
