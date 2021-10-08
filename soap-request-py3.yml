@@ -1,0 +1,26 @@
+- name: Soap Request for Python 3x
+  hosts: localhost
+  tasks:
+  - name: call soap service
+    soap_request:
+      api_type: SOAP
+      #force_basic_auth: no
+      #user: None
+      #password: None
+      url: "https://host:port/api/endpoint.svc"
+      method: 'POST'
+      headers:
+        Content-Type: text/xml; charset=utf-8
+        SOAPAction: http://tempuri.org/CustomerMail/sendMail
+      xml_body: |
+        <xmlString>
+          <multi>
+            <line>
+              <xml></xml>
+            </line>
+          </multi>
+        </xmlString>
+    register: result
+  - name: dump result
+    debug:
+      msg: '{{ result }}'
