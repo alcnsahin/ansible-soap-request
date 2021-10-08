@@ -1,4 +1,4 @@
-- name: Soap Request
+- name: Soap Request for Python 2x
   hosts: localhost
   tasks:
   - name: call soap service

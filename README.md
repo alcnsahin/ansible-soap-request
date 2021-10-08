@@ -17,7 +17,7 @@ Example Playbook for soap_request_py2.py
 `ansible-playbook -i localhost soap-request.yml`
 
 
-    - name: Soap Request
+    - name: Soap Request for Python 2x
       hosts: localhost
       tasks:
       - name: call soap service
@@ -50,12 +50,20 @@ SOAP Example Playbook for Python 3.x
           method: 'POST'
           headers:
             Content-Type: text/xml; charset=utf-8
-            Another-Header: foo
-          xml_body: '<xmlString></xmlString>'
+            SOAPAction: http://tempuri.org/CustomerMail/sendMail
+          xml_body: | 
+            <xmlString>
+              <multi>
+                <line>
+                  <xml></xml>
+                </line>
+              </multi>
+            </xmlString>
         register: result
       - name: dump result
         debug:
           msg: '{{ result }}'
+
 
 REST Example Playbook for Python 3.x
 ----------------
@@ -63,7 +71,7 @@ REST Example Playbook for Python 3.x
 `ansible-playbook -i localhost soap-request.yml`
 
 
-    - name: Soap Request
+    - name: Rest Request
       hosts: localhost
       tasks:
       - name: call rest service
