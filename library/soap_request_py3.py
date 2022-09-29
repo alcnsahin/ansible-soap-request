@@ -84,10 +84,12 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
 def get_auth_token(user, password):
-    token = 'Basic '
+    token_bytes = None
     if all(v is not None for v in [user, password]):
-        token += base64.b64encode(user + ":" + password)
-    return token
+        user_string = user + ':' + password
+        user_string_bytes = user_string.encode('ascii')
+        token_bytes = base64.b64encode(user_string_bytes)
+    return 'Basic ' + token_bytes.decode('ascii')
 
 
 def get(url, headers, force_basic_auth, user, password):
@@ -102,7 +104,11 @@ def post(url, headers, body, force_basic_auth, user, password):
         headers["Authorization"] = get_auth_token(user, password)
     for header_key, header_value in headers.items():
         headers[header_key] = header_value
-    r = requests.post(url, data=body, headers=headers, verify=False)
+    try:
+        r = requests.post(url, data=body, headers=headers, verify=False)
+    except requests.exceptions.HTTPError as e:
+        raise SystemExit(e)
+
     return r.text, r.headers
 
 
